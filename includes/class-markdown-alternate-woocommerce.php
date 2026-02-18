@@ -59,8 +59,10 @@ final class MarkDown_Alternate_WooCommerce {
 	private function init_hooks() {
 		// Add product CPT
 		add_filter( 'markdown_alternate_supported_post_types', array( $this, 'add_product_cpt' ) );
-		// Add product taxonomies
+		// Add product taxonomies to frontmatter
 		add_filter( 'markdown_alternate_frontmatter_taxonomies', array( $this, 'add_frontmatter_product_taxonomies' ), 10, 2 );
+		// Add product details to frontmatter
+		add_filter( 'markdown_alternate_frontmatter_content_lines', array( $this, 'add_frontmatter_product_details' ), 10, 2 );
 	}
 
 	/**
@@ -76,7 +78,7 @@ final class MarkDown_Alternate_WooCommerce {
 
 	/**
 	 * Add product taxonomies to frontmatter
-	 * Only availabe if this branch is merged: 
+	 * Only availabe if this branch is merged: https://github.com/webdados/markdown-alternate/tree/refactor-frontmatter
 	 *
 	 * @param array   $taxonomies Supported taxonomies
 	 * @param WP_Post $post The post object
@@ -101,6 +103,40 @@ final class MarkDown_Alternate_WooCommerce {
 			}
 		}
 		return $taxonomies;
+	}
+
+	/**
+	 * Add product details to frontmatter
+	 * - Price
+	 * - Currency
+	 * - Stock
+	 * Very simple implementation just for single products
+	 * Only availabe if this branch is merged: https://github.com/webdados/markdown-alternate/tree/refactor-frontmatter
+	 *
+	 * @param array   $lines Supported content lines
+	 * @param WP_Post $post The post object
+	 * @return array
+	 */
+	public function add_frontmatter_product_details( $content_lines, $post ) {
+		$post_type = get_post_type( $post );
+		if ( $post_type === 'product' ) {
+			$product = wc_get_product( $post->ID );
+			if ( $product ) {
+				$content_lines['price'] = array(
+					'type'    => 'number',
+					'content' => $product->get_price()
+				);
+				$content_lines['currency'] = array(
+					'type'    => 'string',
+					'content' => get_woocommerce_currency()
+				);
+				$content_lines['stock'] = array(
+					'type'    => 'number',
+					'content' => $product->get_stock_quantity()
+				);
+			}
+		}
+		return $content_lines;
 	}
 }
 
