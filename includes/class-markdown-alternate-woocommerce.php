@@ -113,7 +113,7 @@ final class MarkDown_Alternate_WooCommerce {
 	 * Very simple implementation just for single products
 	 * Only availabe if this branch is merged: https://github.com/webdados/markdown-alternate/tree/refactor-frontmatter
 	 *
-	 * @param array   $lines Supported content lines
+	 * @param array   $content_lines Supported content lines
 	 * @param WP_Post $post The post object
 	 * @return array
 	 */
@@ -122,17 +122,17 @@ final class MarkDown_Alternate_WooCommerce {
 		if ( $post_type === 'product' ) {
 			$product = wc_get_product( $post->ID );
 			if ( $product ) {
-				$content_lines['price'] = array(
+				$content_lines['price']    = array(
 					'type'    => 'number',
-					'content' => $product->get_price()
+					'content' => $product->get_price(),
 				);
 				$content_lines['currency'] = array(
 					'type'    => 'string',
-					'content' => get_woocommerce_currency()
+					'content' => get_woocommerce_currency(),
 				);
-				$content_lines['stock'] = array(
+				$content_lines['stock']    = array(
 					'type'    => 'number',
-					'content' => $product->get_stock_quantity()
+					'content' => $product->get_stock_quantity(),
 				);
 			}
 		}
