@@ -1,6 +1,6 @@
 # Markdown Alternate WooCommerce
 
-WooCommerce integration for [https://github.com/ProgressPlanner/markdown-alternate](Markdown Alternate) (by Joost de Valk / Progress Planner).
+WooCommerce integration for [Markdown Alternate](https://github.com/ProgressPlanner/markdown-alternate) (by Joost de Valk / Progress Planner).
 
 ## Features
 
