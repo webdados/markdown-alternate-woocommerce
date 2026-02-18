@@ -59,6 +59,8 @@ final class MarkDown_Alternate_WooCommerce {
 	private function init_hooks() {
 		// Add product CPT
 		add_filter( 'markdown_alternate_supported_post_types', array( $this, 'add_product_cpt' ) );
+		// Add product taxonomies
+		add_filter( 'markdown_alternate_frontmatter_taxonomies', array( $this, 'add_frontmatter_product_taxonomies' ), 10, 2 );
 	}
 
 	/**
@@ -70,6 +72,35 @@ final class MarkDown_Alternate_WooCommerce {
 	public function add_product_cpt( $post_types ) {
 		$post_types[] = 'product';
 		return $post_types;
+	}
+
+	/**
+	 * Add product taxonomies to frontmatter
+	 * Only availabe if this branch is merged: 
+	 *
+	 * @param array   $taxonomies Supported taxonomies
+	 * @param WP_Post $post The post object
+	 * @return array
+	 */
+	public function add_frontmatter_product_taxonomies( $taxonomies, $post ) {
+		$post_type = get_post_type( $post );
+		if ( $post_type === 'product' ) {
+			// Unset default post taxonomies
+			if ( isset( $taxonomies['category'] ) ) {
+				unset( $taxonomies['category'] );
+			}
+			if ( isset( $taxonomies['post_tag'] ) ) {
+				unset( $taxonomies['post_tag'] );
+			}
+			// Add product categories and tags
+			$taxonomies['product_cat'] = 'categories';
+			$taxonomies['product_tag'] = 'tags';
+			// Add product brand, only if registered
+			if ( taxonomy_exists( 'product_brand' ) && is_object_in_taxonomy( 'product', 'product_brand' ) ) {
+				$taxonomies['product_brand'] = 'brands';
+			}
+		}
+		return $taxonomies;
 	}
 }
 
